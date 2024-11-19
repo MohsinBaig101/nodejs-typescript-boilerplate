@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  nodejs:
+    container_name: AIQ-ASSESSMENT
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db 
+    # env_file:
+    #   - aiq-v1-sit.env
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASS=postgres
+      - DB_DATABASE=AIQ-ASSESSMENT-DB
+      - DB_SYNCRONIZE=true
+      - DB_LOGGING=true
+      
+    volumes:
+      - vol-node-container:/app/dist
+      # - ./src:/app/src
+      # - ./dist:/app/dist
+
+  # PostgreSQL service
+  db:
+    container_name: AIQ-ASSESSMENT-postgres-db
+    image: postgres:13 
+    restart: always
+    environment:
+      POSTGRES_DB: AIQ-ASSESSMENT-DB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432" 
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
+  vol-node-container:
